@@ -1,44 +1,40 @@
-# Add a Call Whisper using Node and the Nexmo Voice API
-
-This app used the Nexmo Voice APIs to demonstrate how add a Voice Whisper to a call, letting the
+# Create a Call Whisper with the conversation action of the NCCO
+* This app adds a Voice Whisper to combine unique inbound numbers to identify the source of the call.
+* A business could advertise a phone number specific to a marketing campaign or one route of the campaign.
+* When someone calls the number, the call is forwarded to an existing customer service call centre.
+* An audio is played to help identify the purpose of the call, before the caller is connected.
 
 ## Prerequisites
-
-You will need:
-
-* A [free Nexmo account](https://dashboard.nexmo.com/sign-up)
-* The [Nexmo CLI](https://github.com/Nexmo/nexmo-cli) installed
-* A way to run a local server on a public port, for example [Ngrok](https://ngrok.com/).
+* [Nexmo account](https://dashboard.nexmo.com/sign-up)
+* [Nexmo CLI](https://github.com/Nexmo/nexmo-cli)
+* [Ngrok](https://ngrok.com/)
 
 
-## Installation
-
+## Step by Step Guide
+1. Reuse the source code
 ```sh
 git clone https://github.com/nexmo/node-call-whisper.git
 cd node-call-whispher
 npm install
 ```
-
-## Setup
-
-### Buy Numbers & Create Application
-
-To run this application we need to buy 2 numbers, set up an application, and tie the numbers to this application.
-
+2. Post local web server to public with [ngrok_url]
 ```sh
-# create an application
-> nexmo app:create "Whisper System" http://your.domain/answer_inbound http://your.domain/event --type voice --keyfile app.key
-# check the application ID
-> nexmo app:list
-12345678-1234-1234-1234-1234567890 | Whisper System
-# purchase 2 numbers
-> nexmo number:buy 4420 -c GB  --confirm
-Number purchased: 442055555555
-> nexmo number:buy 4420 -c GB  --confirm
-Number purchased: 442055555556
+> ./ngrok http 5000
+```
+3. Prepare numbers [nexmo_number_x], application [nexmo_app], and link them
+```sh
+# create the nexmo application
+> nexmo app:create "whisper-conversation" [ngrok_url]/answer [ngrok_url]/event --keyfile private.key
+Application created: [nexmo_app]
+Private Key saved to: private.key
+# purchase two nexmo numbers
+> nexmo number:buy -c US --confirm
+Number purchased: [nexmo_number_1]
+> nexmo number:buy -c US --confirm
+Number purchased: [nexmo_number_2]
 # link the numbers to the application ID
-> nexmo link:app 442055555555 12345678-1234-1234-1234-1234567890
-> nexmo link:app 442055555556 12345678-1234-1234-1234-1234567890
+> nexmo link:app [nexmo_number_1] [nexmo_app]
+> nexmo link:app [nexmo_number_2] [nexmo_app]
 ```
 
 ### Run Server
@@ -49,7 +45,7 @@ The next step is to set up all of our variables in a `.env` file. You can start 
 mv .env.example .env
 ```
 
-Fill in the values in `.env` as appropriate, where `INBOUND_NUMBER_1` and `INBOUND_NUMBER_2` are the numbers you just purchased, `CALL_CENTER_NUMBER` is the number you want them to direct to, and `NEXMO_APP_FILE_NAME` is the file name of your application key (`app.key`). Finally, `DOMAIN` is the public domain or hostname your server is available on. 
+Fill in the values in `.env` as appropriate, where `INBOUND_NUMBER_1` and `INBOUND_NUMBER_2` are the numbers you just purchased, `CALL_CENTER_NUMBER` is the number you want them to direct to, and `NEXMO_APP_FILE_NAME` is the file name of your application key (`app.key`). Finally, `DOMAIN` is the public domain or hostname your server is available on.
 
 With this in place you can start the server.
 
