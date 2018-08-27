@@ -24,7 +24,7 @@ npm install
 3. Prepare numbers [nexmo_number_x], application [nexmo_app], and link them
 ```sh
 # create the nexmo application
-> nexmo app:create "whisper-conversation" [ngrok_url]/answer [ngrok_url]/event --keyfile private.key
+> nexmo app:create "whisper-conversation" [ngrok_url]/answer_inbound [ngrok_url]/event --keyfile private.key
 Application created: [nexmo_app]
 Private Key saved to: private.key
 # purchase two nexmo numbers
@@ -36,27 +36,20 @@ Number purchased: [nexmo_number_2]
 > nexmo link:app [nexmo_number_1] [nexmo_app]
 > nexmo link:app [nexmo_number_2] [nexmo_app]
 ```
-
-### Run Server
-
-The next step is to set up all of our variables in a `.env` file. You can start off by copying the example file.
-
+4. Copy example .env file, fill in variables, then run the web server
 ```sh
 mv .env.example .env
 ```
-
-Fill in the values in `.env` as appropriate, where `INBOUND_NUMBER_1` and `INBOUND_NUMBER_2` are the numbers you just purchased, `CALL_CENTER_NUMBER` is the number you want them to direct to, and `NEXMO_APP_FILE_NAME` is the file name of your application key (`app.key`). Finally, `DOMAIN` is the public domain or hostname your server is available on.
-
-With this in place you can start the server.
-
+Set up all environment variables in the `.env` file.
+* `INBOUND_NUMBER_1` and `INBOUND_NUMBER_2` are the Nexmo numbers you purchased.
+* `CALL_CENTER_NUMBER` is the number you want them to direct to.
+* `NEXMO_APP_FILE_NAME` is the file name of your application key (`private.key`).
+* `DOMAIN` is the public domain [ngrok_url] your server is available on.
 ```sh
 npm start
 ```
-
-The application should be available on <http://localhost:5000>. For this to work full though, make sure to expose your server on a public domain (e.g. `your.domain` in the example above) using a tool like [Ngrok](https://ngrok.com/).
-
-## Using the App
-
-To use the app you need two phones, or a phone and something like Skype to make the first call.
-
-With your server running, call either of the 2 numbers you purchased. Nexmo will then make a call to `http://your.domain/answer_inbound` which puts the inbound call on hold. A call is then made to the `CALL_CENTER_NUMBER`(your other phone) where a message is played regarding the nature of the call before both parties are connected to the same conference.
+5. Test the App
+* Call either of the 2 numbers you purchased.
+* Nexmo will make a call to `http://your.domain/answer_inbound` and puts the inbound call on hold.
+* A call is then made to the `CALL_CENTER_NUMBER`(your other phone).
+* A message is played regarding the nature of the call before both parties are connected to the same conference.
